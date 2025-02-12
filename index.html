@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Valentines Day</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .gradient-background {
+      background: rgb(255, 105, 180); /* Redish pink background */
+      background: linear-gradient(180deg, rgba(255, 105, 180, 1) 0%, rgba(255, 99, 132, 1) 50%, rgba(255, 182, 193, 1) 100%);
+    }
+
+    .bounce2 {
+      animation: bounce2 2s ease infinite;
+    }
+
+    @keyframes bounce2 {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-20px);
+      }
+      60% {
+        transform: translateY(-10px);
+      }
+    }
+
+    .petunia {
+      position: fixed;
+      bottom: 10%;
+      left: 15%;
+      width: 150px;
+      z-index: 10;
+    }
+
+    .petunia-sad {
+      display: block;
+    }
+
+    .petunia-happy {
+      display: none;
+    }
+
+    .timer {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #bd1e59;
+      margin-top: 20px;
+      z-index: 20;
+      position: fixed;
+      top: 20%;
+      left: 5%;
+      transform: translateX(0);
+    }
+
+    /* Emoji styles and animations */
+    .emoji {
+      position: absolute;
+      font-size: 2rem;
+      opacity: 0;
+      animation: fall 6s linear infinite, scale 2s infinite alternate;
+      z-index: 5;
+    }
+
+    @keyframes fall {
+      0% {
+        top: -10%;
+        opacity: 1;
+      }
+      100% {
+        top: 110%;
+        opacity: 0;
+      }
+    }
+
+    @keyframes scale {
+      0% {
+        transform: scale(1);
+      }
+      100% {
+        transform: scale(1.5);
+      }
+    }
+  </style>
+</head>
+<body class="gradient-background">
+  <div class="flex items-center justify-center h-screen">
+    <div class="flex flex-col items-center p-4">
+      <img id="imageDisplay" src="./images/image1.gif" alt="Cute kitten with flowers" class="rounded-md h-[300px]" style="object-fit: cover;" />
+      <h2 id="valentineQuestion" class="text-4xl font-bold italic text-[#bd1e59] my-4">Hiii Taevia, Will you be mine for Valentine?</h2>
+      <div class="flex gap-4 pt-[20px] items-center" id="responseButtons">
+        <button id="yesButton"
+          class="bounce2 inline-flex items-center justify-center whitespace-nowrap rounded-md text-[20px] font-medium disabled:pointer-events-none disabled:opacity-50 hover:bg-green-400 min-h-12 min-w-[75px] px-4 py-2 bg-green-500 text-white transition">
+          Yes
+        </button>
+        <button id="noButton"
+          class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-[20px] font-medium transition disabled:pointer-events-none disabled:opacity-50 hover:bg-red-700 h-12 min-w-[75px] w-auto px-4 py-2 bg-red-500 text-white">
+          No
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Image of Petunia the Strawberry Squishmallow -->
+  <img src="./images/petunia-sad.png" alt="Petunia the Strawberry Squishmallow" class="petunia petunia-sad" id="petuniaImage" />
+  <img src="./images/petunia-happy.png" alt="Petunia the Strawberry Squishmallow Happy" class="petunia petunia-happy" id="petuniaHappyImage" />
+
+  <!-- Countdown Timer -->
+  <div id="timer" class="timer">Loading...</div>
+
+  <script type="module">
+    import confetti from 'https://cdn.skypack.dev/canvas-confetti';
+    const yesButton = document.getElementById('yesButton');
+    const noButton = document.getElementById('noButton');
+    const imageDisplay = document.getElementById('imageDisplay');
+    const valentineQuestion = document.getElementById('valentineQuestion');
+    const responseButtons = document.getElementById('responseButtons');
+    const petuniaImage = document.getElementById('petuniaImage');
+    const petuniaHappyImage = document.getElementById('petuniaHappyImage');
+    const timerDisplay = document.getElementById('timer');
+  
+    let noClickCount = 0;
+    let buttonHeight = 48; // Starting height in pixels
+    let buttonWidth = 80;
+    let fontSize = 20; // Starting font size in pixels
+    const imagePaths = [
+      "./images/image1.gif",
+      "./images/image2.gif",
+      "./images/image3.gif",
+      "./images/image4.gif",
+      "./images/image5.gif",
+      "./images/image6.gif",
+      "./images/image7.gif"
+    ];
+
+    // Set the target date for countdown: February 13, 2025, 11:59 PM
+    const targetDate = new Date('February 13, 2025 23:59:00').getTime();
+
+    // Function to update the countdown
+    function updateCountdown() {
+      const now = new Date().getTime();  // Get current time
+      const timeRemaining = targetDate - now; // Calculate remaining time
+
+      if (timeRemaining <= 0) {
+        // If countdown is finished, stop and show prompt
+        clearInterval(countdownInterval);
+        timerDisplay.textContent = "Happy Valentine's Day!";
+        valentineQuestion.style.display = 'block';  // Show the Valentine question
+        responseButtons.style.display = 'flex';  // Show the response buttons
+      } else {
+        // Calculate days, hours, minutes, and seconds
+        const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+        // Display the time left
+        timerDisplay.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      }
+    }
+
+    // Call updateCountdown every 1 second
+    const countdownInterval = setInterval(updateCountdown, 1000);
+
+    // Function to generate emoji flowers and hearts
+    function generateEmoji() {
+      const emojis = ['❤️', '💐', '🌸', '🌹', '💖', '🌺']; // Emoji array
+      const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+
+      const emojiElement = document.createElement('div');
+      emojiElement.classList.add('emoji');
+      emojiElement.innerText = randomEmoji;
+
+      // Randomize size
+      const size = Math.floor(Math.random() * (40 - 15 + 1)) + 15; // Random size between 15px and 40px
+      emojiElement.style.fontSize = `${size}px`;
+
+      // Randomize position
+      const leftPosition = Math.floor(Math.random() * window.innerWidth);
+      emojiElement.style.left = `${leftPosition}px`;
+
+      // Append to body and animate
+      document.body.appendChild(emojiElement);
+
+      // Remove emoji after it falls off screen
+      setTimeout(() => {
+        emojiElement.remove();
+      }, 6000); // Remove after 6 seconds (the duration of the fall animation)
+    }
+
+    // Generate emojis every 200ms
+    setInterval(generateEmoji, 200);
+
+    noButton.addEventListener('click', function() {
+      if (noClickCount < 5) {
+        noClickCount++;
+        imageDisplay.src = imagePaths[noClickCount];
+        buttonHeight += 35; // Increase height by 5px on each click
+        buttonWidth += 35;
+        fontSize += 25; // Increase font size by 1px on each click
+        yesButton.style.height = `${buttonHeight}px`; // Update button height
+        yesButton.style.width = `${buttonWidth}px`;
+        yesButton.style.fontSize = `${fontSize}px`; // Update font size
+        if (noClickCount < 6) {
+          noButton.textContent = ["No", "I think you clicked the wrong button", "I really think you clicked the wrong button", "POOKIE PLEASE, Don't do this to me :(", "You're breaking my heart", "I'm gonna cry..."][noClickCount];
+        }
+      }
+    });
+  
+    yesButton.addEventListener('click', () => {
+      imageDisplay.src = './images/image7.gif'; // Change to image7.gif
+      valentineQuestion.textContent = "Yayyy!! :3 Backshots and Chocolate coming sooon"; // Change the question text
+      responseButtons.style.display = 'none'; // Hide both buttons
+      petuniaImage.classList.add('petunia-happy');
+      petuniaImage.classList.remove('petunia-sad');
+      petuniaHappyImage.classList.add('petunia-sad');
+      petuniaHappyImage.classList.remove('petunia-happy');
+      confetti(); // Trigger confetti animation
+    });
+  </script>
+</body>
+</html>
